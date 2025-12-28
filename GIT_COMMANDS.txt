@@ -1,0 +1,24 @@
+# Quick Git Commands for Enhanced Version
+
+## Add New Files
+git add backend/api_enhanced.py
+git add frontend/src/AppEnhanced.jsx
+git add ENHANCED_VERSION_README.md
+git add START_ENHANCED_BACKEND.ps1
+git add switch_to_enhanced.ps1
+git add switch_to_original.ps1
+git add GIT_UPDATE_GUIDE.md
+
+## Add Modified Files
+git add backend/api.py
+git add requirements.txt
+
+## Optional: Add backup file
+git add frontend/src/App.original.jsx
+
+## Commit
+git commit -m "Add enhanced multi-file analysis version with cross-file trend detection"
+
+## Push
+git push
+

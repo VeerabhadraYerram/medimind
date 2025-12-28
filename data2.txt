@@ -1,0 +1,148 @@
+%PDF-1.4
+1 0 obj
+<<
+/Title (Patient Intake Form)
+/Author (Cardiology Associates)
+/Creator (Adobe Acrobat)
+>>
+endobj
+
+PATIENT INTAKE FORM - CARDIOLOGY ASSOCIATES
+==================================================================
+
+PERSONAL INFORMATION
+------------------------------------------------------------------
+Full Name: James Michael Rodriguez
+Date of Birth: 11/15/1958 (Age: 65)
+Gender: Male
+Phone: (555) 234-5678
+Email: j.rodriguez@email.com
+Address: 456 Oak Avenue, Chicago, IL 60614
+Emergency Contact: Maria Rodriguez (Wife) - (555) 876-5432
+Relationship to Patient: Spouse
+
+MEDICAL HISTORY
+------------------------------------------------------------------
+Primary Care Physician: Dr. Angela Martinez
+Cardiologist: Dr. Samuel Chen (Referred by PCP)
+Last Visit: 01/20/2024
+
+Current Medications:
+1. Metoprolol 50mg - Twice daily for hypertension
+2. Atorvastatin 40mg - Daily for hyperlipidemia
+3. Aspirin 81mg - Daily for cardiac protection
+4. Clopidogrel 75mg - Daily post-stent (since 2023)
+5. Lisinopril 20mg - Daily for hypertension
+6. Furosemide 40mg - As needed for edema
+7. Nitroglycerin spray - As needed for chest pain
+
+Allergies:
+- Codeine (Severe: respiratory depression)
+- Shellfish (Moderate: hives)
+- Iodinated contrast (Mild: nausea)
+
+Chronic Conditions:
+- Coronary Artery Disease (Diagnosed 2022, 2 stents placed)
+- Hypertension (Diagnosed 2015)
+- Hyperlipidemia (Diagnosed 2018)
+- Type 2 Diabetes (Diagnosed 2020)
+- Heart Failure, Stage B (Diagnosed 2023)
+- GERD (Chronic)
+
+Surgical History:
+- CABG x2 (Coronary artery bypass graft, 2022)
+- Cholecystectomy (2018)
+- Cataract surgery, right eye (2021)
+
+Family History:
+- Father: Myocardial infarction at age 52 (fatal)
+- Mother: Type 2 Diabetes, Hypertension
+- Brother: Coronary artery disease (Age 60)
+- Sister: Hypertension
+
+SOCIAL HISTORY
+------------------------------------------------------------------
+Smoking: Former smoker (quit 2010, 30 pack-years)
+Alcohol: 1 glass of red wine nightly (cardiologist approved)
+Drug Use: None
+Occupation: Retired electrician
+Exercise: Cardiac rehab 3x/week, walking daily
+Diet: Cardiac diet (low sodium, low saturated fat)
+Sleep: Uses CPAP for sleep apnea (diagnosed 2021)
+
+REASON FOR VISIT
+------------------------------------------------------------------
+Chief Complaint: "Increasing shortness of breath and fatigue for 1 month"
+
+History of Present Illness:
+"Patient reports worsening shortness of breath over past month, now occurring with walking 1 block (previously could walk 5 blocks). Notices increased leg swelling in evenings. Wakes up at night short of breath 2-3 times weekly (2-pillow orthopnea). No chest pain currently but reports more frequent angina episodes (1-2/week vs previous 1/month). Weight gain of 8 lbs in past month despite diet compliance."
+
+Symptoms:
+- Dyspnea: Yes (NYHA Class III)
+- Orthopnea: Yes (2-pillow)
+- Paroxysmal nocturnal dyspnea: Yes
+- Edema: Bilateral lower extremities, pitting 2+
+- Angina: Yes (more frequent, less intense)
+- Palpitations: Occasional
+- Fatigue: Severe
+
+VITAL SIGNS (TODAY)
+------------------------------------------------------------------
+Blood Pressure: 158/92 mmHg
+Heart Rate: 88 bpm (irregularly irregular)
+Temperature: 98.6°F (37.0°C)
+Respiratory Rate: 24 breaths/min
+Oxygen Saturation: 91% on room air
+Height: 5'9" (175 cm)
+Weight: 210 lbs (95 kg) (Previous: 202 lbs last month)
+BMI: 31.0
+Jugular Venous Distension: 8 cm H2O
+
+REVIEW OF SYSTEMS
+------------------------------------------------------------------
+Constitutional: Weight gain, fatigue, decreased appetite
+HEENT: No visual changes, hearing aids bilateral
+Cardiovascular: Palpitations, edema, orthopnea as above
+Respiratory: Shortness of breath, cough (dry)
+Gastrointestinal: Early satiety, normal bowel habits
+Genitourinary: Nocturia x2, benign prostate hypertrophy (known)
+Neurological: Mild peripheral neuropathy (feet)
+Musculoskeletal: Arthritis in knees and hands
+
+DIAGNOSTIC DATA
+------------------------------------------------------------------
+Recent Labs (02/15/2024):
+- BNP: 850 pg/mL (Elevated)
+- Troponin: 0.03 ng/mL (Normal)
+- Creatinine: 1.4 mg/dL
+- eGFR: 52 mL/min/1.73m²
+- HbA1c: 7.2%
+- LDL: 95 mg/dL
+
+Recent Studies:
+- Echocardiogram (01/2024): EF 40%, moderate diastolic dysfunction
+- Stress Test (12/2023): Positive for ischemia, 5 METs capacity
+
+INSURANCE INFORMATION
+------------------------------------------------------------------
+Insurance Provider: Medicare + Aetna Supplement
+Medicare Number: 1A2B-3C4D-5E6F
+Supplement Policy: AET-SUP-889977
+Pharmacy: CVS Caremark
+
+CONSENTS
+------------------------------------------------------------------
+HIPAA Acknowledgment: Signed 02/28/2024
+Advanced Directive: On file (DNR/DNI - Full Code)
+Research Participation: Declined
+Release of Information: To PCP and referring cardiologist
+
+PATIENT GOALS
+------------------------------------------------------------------
+"I want to be able to play with my grandchildren without getting short of breath. I want to understand if I need more procedures or if medications can be adjusted."
+
+==================================================================
+Form Completed: 02/28/2024 at 2:15 PM
+Patient Signature: [Electronic Signature on File]
+Intake Coordinator: David Kim, CMA
+Cardiologist Review: Dr. Samuel Chen (pending)

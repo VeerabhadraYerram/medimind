@@ -1,0 +1,121 @@
+%PDF-1.4
+1 0 obj
+<<
+/Title (Patient Intake Form)
+/Author (General Hospital)
+/Creator (Adobe Acrobat)
+>>
+endobj
+
+% Simplified PDF content representing:
+
+PATIENT INTAKE FORM - GENERAL HOSPITAL
+==================================================================
+
+PERSONAL INFORMATION
+------------------------------------------------------------------
+Full Name: Sarah Elizabeth Johnson
+Date of Birth: 05/22/1987 (Age: 37)
+Gender: Female
+Phone: (555) 123-4567
+Email: sarah.johnson@email.com
+Address: 123 Maple Street, Boston, MA 02115
+Emergency Contact: Michael Johnson (Husband) - (555) 987-6543
+
+MEDICAL HISTORY
+------------------------------------------------------------------
+Primary Care Physician: Dr. Robert Chen
+Last Visit: 03/15/2024
+
+Current Medications:
+1. Lisinopril 10mg - Daily for hypertension
+2. Metformin 500mg - Twice daily for Type 2 Diabetes
+3. Atorvastatin 20mg - Daily for high cholesterol
+4. Albuterol inhaler - As needed for asthma
+5. Ibuprofen 400mg - As needed for headaches
+
+Allergies:
+- Penicillin (Severe: anaphylaxis)
+- Sulfa drugs (Moderate: rash)
+- Peanuts (Severe)
+- Latex (Mild: skin irritation)
+
+Chronic Conditions:
+- Hypertension (Diagnosed 2019)
+- Type 2 Diabetes (Diagnosed 2021)
+- Asthma (Childhood onset)
+- Migraine headaches (Occasional)
+
+Surgical History:
+- Appendectomy (2010)
+- Tonsillectomy (Age 12)
+- C-section (2019)
+
+Family History:
+- Father: Heart disease (Age 65), Hypertension
+- Mother: Breast cancer (Age 58), Type 2 Diabetes
+- Siblings: None
+
+SOCIAL HISTORY
+------------------------------------------------------------------
+Smoking: Former smoker (quit 2018, 5 pack-years)
+Alcohol: Social drinker (1-2 drinks/week)
+Drug Use: None
+Occupation: Software engineer (sedentary)
+Exercise: 2-3 times weekly (walking, yoga)
+Diet: Mostly vegetarian, tries to limit carbs
+
+REASON FOR VISIT
+------------------------------------------------------------------
+Chief Complaint: "Persistent cough and shortness of breath for 2 weeks"
+
+History of Present Illness:
+"Started with mild cough 2 weeks ago, progressively worsened. Now experiencing shortness of breath with minimal exertion. Cough productive of yellow phlegm. Mild fever (100.2°F) yesterday. Tried OTC cough syrup with little relief. No chest pain, but some discomfort when coughing deeply."
+
+Symptoms:
+- Cough: Yes (productive)
+- Shortness of breath: Yes (with exertion)
+- Fever: Yes (low-grade)
+- Chest pain: No
+- Fatigue: Moderate
+- Night sweats: Mild
+
+VITAL SIGNS (TODAY)
+------------------------------------------------------------------
+Blood Pressure: 142/88 mmHg
+Heart Rate: 102 bpm
+Temperature: 100.4°F (38.0°C)
+Respiratory Rate: 22 breaths/min
+Oxygen Saturation: 94% on room air
+Height: 5'6" (167 cm)
+Weight: 175 lbs (79 kg)
+BMI: 28.2
+
+REVIEW OF SYSTEMS
+------------------------------------------------------------------
+Constitutional: Fatigue, mild fever
+HEENT: Sore throat, no sinus pain
+Cardiovascular: Palpitations occasionally
+Respiratory: Cough, shortness of breath
+Gastrointestinal: Normal
+Genitourinary: Normal
+Neurological: Mild headache
+Musculoskeletal: Generalized aches
+
+INSURANCE INFORMATION
+------------------------------------------------------------------
+Insurance Provider: Blue Cross Blue Shield MA
+Policy Number: BCBSMA-88765432
+Group Number: 555-1234
+Subscriber: Sarah Johnson (Self)
+
+CONSENTS
+------------------------------------------------------------------
+HIPAA Acknowledgment: Signed and dated 04/10/2024
+Treatment Consent: Yes
+Release of Information: To PCP (Dr. Chen)
+
+==================================================================
+Form Completed: 04/10/2024 at 10:30 AM
+Patient Signature: [Electronic Signature on File]
+Intake Nurse: Jane Wilson, RN
