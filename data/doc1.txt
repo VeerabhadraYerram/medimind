@@ -1,0 +1,2 @@
+This document says: Pathway is a streaming data engine. This project is called Synaptix Agent.
+
