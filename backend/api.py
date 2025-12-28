@@ -10,7 +10,7 @@ from langchain_core.messages import HumanMessage
 # --------------------
 # App
 # --------------------
-app = FastAPI()
+app = FastAPI(title="MediMind – Clinical Intake Agent")
 
 app.add_middleware(
     CORSMiddleware,
@@ -26,7 +26,7 @@ os.makedirs(DATA_DIR, exist_ok=True)
 # Models
 # --------------------
 class Query(BaseModel):
-    question: str
+    question: str | None = None  # Doctor may or may not ask a question
 
 # --------------------
 # LLM
@@ -49,6 +49,57 @@ def load_documents():
     return "\n\n".join(docs)
 
 # --------------------
+# Prompts
+# --------------------
+CLINICAL_INTAKE_PROMPT = """
+Generate a structured clinical patient intake summary using ONLY the data provided.
+
+Return the output STRICTLY in this format:
+
+Patient Summary:
+- Age:
+- Gender:
+- Chief Complaint:
+
+Medical History:
+- Chronic conditions:
+- Past diagnoses:
+
+Current Admission Findings:
+- Symptoms:
+- Abnormal lab results:
+- Imaging findings:
+
+Procedures / Interventions:
+- (List if present, else say "Not mentioned in records")
+
+Medications:
+- Current medications:
+- Discharge medications:
+
+Red Flags / Critical Observations:
+- (Only if explicitly mentioned, else say "None mentioned")
+
+Missing or Unclear Information:
+- (List important clinical info not present in records)
+
+If any field is missing, explicitly write: "Not mentioned in records".
+"""
+
+QA_PROMPT_TEMPLATE = """
+You are MediMind, a clinical assistant for doctors.
+
+Answer the question using ONLY the patient records below.
+If the answer is not present, say exactly: "Not mentioned in records".
+
+PATIENT RECORDS:
+{documents}
+
+QUESTION:
+{question}
+"""
+
+# --------------------
 # Routes
 # --------------------
 @app.get("/ping")
@@ -67,12 +118,24 @@ async def upload(file: UploadFile = File(...)):
 def ask(query: Query):
     documents = load_documents()
 
-    prompt = f"""
-You MUST answer using ONLY the information below.
-If insufficient, respond exactly:
-"Insufficient information."
+    # Auto mode detection
+    is_question = bool(query.question and query.question.strip())
 
-INFORMATION:
+    if not is_question:
+        final_prompt = f"""
+{CLINICAL_INTAKE_PROMPT}
+
+PATIENT RECORDS:
+{documents}
+"""
+    else:
+        final_prompt = f"""
+You are MediMind, a clinical patient intake assistant for doctors.
+
+Answer the question using ONLY the patient records below.
+If the answer is not present, say: "Not mentioned in records".
+
+PATIENT RECORDS:
 {documents}
 
 QUESTION:
@@ -81,15 +144,34 @@ QUESTION:
 
     def stream():
         try:
-            # 🔥 ONE LLM CALL ONLY
-            answer = llm.invoke([HumanMessage(content=prompt)]).content
+            answer = llm.invoke([HumanMessage(content=final_prompt)]).content
 
-            # 🔥 Token streaming (safe)
             for word in answer.split():
                 yield f"data: {json.dumps({'token': word + ' '})}\n\n"
                 time.sleep(0.02)
 
-            # 🔥 Final metadata
+            yield f"data: {json.dumps({'final': {'answer': answer}})}\n\n"
+            yield "data: [DONE]\n\n"
+
+        except Exception as e:
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+
+    return StreamingResponse(stream(), media_type="text/event-stream")
+
+    # --------------------
+    # Streaming response
+    # --------------------
+    def stream():
+        try:
+            answer = llm.invoke(
+                [HumanMessage(content=final_prompt)]
+            ).content
+
+            # Token-style streaming
+            for word in answer.split():
+                yield f"data: {json.dumps({'token': word + ' '})}\n\n"
+                time.sleep(0.015)
+
             yield f"data: {json.dumps({'final': {'answer': answer}})}\n\n"
             yield "data: [DONE]\n\n"
 

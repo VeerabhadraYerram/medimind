@@ -10,24 +10,27 @@ export default function App() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, loading]);
 
-  async function sendMessage() {
-    if (!input.trim() || loading) return;
+  async function sendMessage(questionText = "") {
+    if (loading) return;
 
-    const question = input;
-    setInput("");
     setLoading(true);
 
-    // User message
+    // Add user message only if question exists
+    if (questionText) {
+      setMessages((prev) => [
+        ...prev,
+        { role: "user", content: questionText },
+      ]);
+    }
+
+    // Add placeholder assistant message
     setMessages((prev) => [
       ...prev,
-      { role: "user", content: question },
       {
         role: "assistant",
-        answer: "",
-        plan: "",
-        context: "",
+        content: "",
         streaming: true,
       },
     ]);
@@ -36,7 +39,9 @@ export default function App() {
       const res = await fetch("http://127.0.0.1:8000/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({
+          question: questionText || null, // IMPORTANT
+        }),
       });
 
       const reader = res.body.getReader();
@@ -60,24 +65,20 @@ export default function App() {
 
           const parsed = JSON.parse(payload);
 
-          // Streaming token
           if (parsed.token) {
             setMessages((prev) => {
               const updated = [...prev];
-              updated[updated.length - 1].answer += parsed.token;
+              updated[updated.length - 1].content += parsed.token;
               return updated;
             });
           }
 
-          // Final structured output
           if (parsed.final) {
             setMessages((prev) => {
               const updated = [...prev];
               updated[updated.length - 1] = {
-                ...updated[updated.length - 1],
-                answer: parsed.final.answer,
-                plan: parsed.final.plan || "",
-                context: parsed.final.context || "",
+                role: "assistant",
+                content: parsed.final.answer,
                 streaming: false,
               };
               return updated;
@@ -85,18 +86,15 @@ export default function App() {
           }
         }
       }
-    } catch (e) {
-      setMessages((prev) => {
-        const updated = [...prev];
-        updated[updated.length - 1] = {
+    } catch (err) {
+      setMessages((prev) => [
+        ...prev,
+        {
           role: "assistant",
-          answer: "Error connecting to backend.",
-          plan: "",
-          context: "",
+          content: "Error connecting to backend.",
           streaming: false,
-        };
-        return updated;
-      });
+        },
+      ]);
       setLoading(false);
     }
   }
@@ -111,17 +109,20 @@ export default function App() {
     });
 
     setUploadedFile(file.name);
+
+    // AUTO-RUN INTAKE AFTER UPLOAD
+    sendMessage("");
   }
 
   return (
     <div className="app">
       {/* Sidebar */}
       <aside className="sidebar">
-        <h1>Synaptix Agent</h1>
-        <p>Grounded AI over your documents</p>
+        <h1>MediMind</h1>
+        <p>Clinical Patient Intake Assistant</p>
 
         <label className="upload-btn">
-          Upload .txt
+          Upload Patient Record (.txt)
           <input
             type="file"
             accept=".txt"
@@ -137,46 +138,23 @@ export default function App() {
         )}
       </aside>
 
-      {/* Chat */}
+      {/* Main Chat */}
       <main className="chat">
         <div className="messages">
           {messages.length === 0 && (
-            <div className="empty">Ask a question to get started.</div>
+            <div className="empty">
+              Upload a patient record to generate intake summary.
+            </div>
           )}
 
           {messages.map((msg, i) => (
             <div key={i} className={`message ${msg.role}`}>
               <div className="bubble">
-                {msg.role === "assistant" ? (
-                  <>
-                    <div className="answer-text">{msg.answer}</div>
-
-                    {msg.plan && (
-                      <details className="trace" open>
-                        <summary>Plan</summary>
-                        <pre>{msg.plan}</pre>
-                      </details>
-                    )}
-
-                    {msg.context && (
-                      <details className="trace">
-                        <summary>Retrieved Context</summary>
-                        <pre>{msg.context}</pre>
-                      </details>
-                    )}
-                  </>
-                ) : (
-                  msg.content
-                )}
+                {msg.content}
+                {msg.streaming && <span className="cursor">▌</span>}
               </div>
             </div>
           ))}
-
-          {loading && (
-            <div className="message assistant">
-              <div className="bubble thinking">Thinking…</div>
-            </div>
-          )}
 
           <div ref={messagesEndRef} />
         </div>
@@ -186,10 +164,26 @@ export default function App() {
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            placeholder="Message Synaptix Agent…"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && input.trim()) {
+                sendMessage(input.trim());
+                setInput("");
+              }
+            }}
+            placeholder="Ask about the patient (e.g., medications, red flags)"
+            disabled={!uploadedFile}
           />
-          <button onClick={sendMessage}>Send</button>
+          <button
+            onClick={() => {
+              if (input.trim()) {
+                sendMessage(input.trim());
+                setInput("");
+              }
+            }}
+            disabled={!uploadedFile || loading}
+          >
+            Send
+          </button>
         </div>
       </main>
     </div>

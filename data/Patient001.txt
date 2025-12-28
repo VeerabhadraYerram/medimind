@@ -1,0 +1,87 @@
+Patient Name: Ramesh Kumar
+Age: 56
+Gender: Male
+Patient ID: PT-45821
+Date of Admission: 12-Aug-2024
+Date of Discharge: 16-Aug-2024
+
+Chief Complaint:
+The patient presented with chest pain radiating to the left arm, associated with shortness of breath and sweating for 2 hours prior to admission.
+
+Medical History:
+- Type 2 Diabetes Mellitus for 12 years
+- Hypertension for 8 years
+- No known history of coronary artery disease prior to this admission
+- No history of stroke or chronic kidney disease
+
+Allergies:
+- No known drug allergies reported
+
+Social History:
+- Non-smoker
+- Occasional alcohol consumption
+- Sedentary lifestyle
+
+Vital Signs on Admission:
+- Blood Pressure: 158/96 mmHg
+- Heart Rate: 104 bpm
+- Respiratory Rate: 22 breaths/min
+- Oxygen Saturation: 94% on room air
+- Temperature: 98.6°F
+
+Investigations:
+ECG:
+- ST-segment elevation noted in leads II, III, and aVF
+
+Laboratory Results:
+- Troponin I: 8.4 ng/mL (elevated)
+- HbA1c: 8.9%
+- Fasting Blood Glucose: 176 mg/dL
+- Serum Creatinine: 1.1 mg/dL
+- LDL Cholesterol: 142 mg/dL
+
+Imaging:
+- Echocardiogram showed inferior wall hypokinesia
+- Left ventricular ejection fraction estimated at 45%
+
+Diagnosis:
+- Acute Inferior Wall Myocardial Infarction
+- Uncontrolled Type 2 Diabetes Mellitus
+- Hypertension
+
+Treatment During Hospital Stay:
+- Aspirin 325 mg once daily
+- Clopidogrel 75 mg once daily
+- Atorvastatin 40 mg once daily
+- Metoprolol 25 mg twice daily
+- Insulin therapy adjusted during admission
+- Oxygen therapy as needed
+
+Procedures:
+- Coronary angiography performed
+- Significant stenosis noted in the right coronary artery
+- Percutaneous coronary intervention (PCI) performed with stent placement
+
+Condition at Discharge:
+- Hemodynamically stable
+- Chest pain resolved
+- Blood glucose levels improved but still above target range
+
+Discharge Medications:
+- Aspirin 75 mg once daily
+- Clopidogrel 75 mg once daily
+- Atorvastatin 40 mg once daily
+- Metoprolol 50 mg twice daily
+- Metformin 500 mg twice daily
+- Insulin as per sliding scale
+
+Discharge Advice:
+- Cardiology follow-up in 1 week
+- Strict glycemic control advised
+- Low-salt, low-fat diet
+- Gradual increase in physical activity
+- Immediate medical attention advised if chest pain recurs
+
+Additional Notes:
+- No documentation of vaccination status
+- Family history of cardiac disease not mentioned
