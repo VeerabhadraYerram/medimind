@@ -1,0 +1,42 @@
+# --------------------
+# Python
+# --------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.env
+.venv
+venv/
+venv311/
+
+# --------------------
+# FastAPI / Uvicorn
+# --------------------
+*.log
+
+# --------------------
+# Node / Frontend
+# --------------------
+node_modules/
+dist/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --------------------
+# OS
+# --------------------
+.DS_Store
+Thumbs.db
+
+# --------------------
+# Editor
+# --------------------
+.vscode/
+.idea/
+
+# Environment variables
+.env
+.env.*
