@@ -2,7 +2,7 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 import os, json, time
 from pathlib import Path
 from dotenv import load_dotenv
@@ -315,6 +315,59 @@ def delete_file(filename: str):
         return {"status": "deleted", "file": filename}
     return {"status": "error", "message": "File not found"}
 
+def chunk_document(content: str, chunk_size: int = 3000, overlap: int = 200) -> List[str]:
+    """Split a document into chunks with overlap for context preservation."""
+    if len(content) <= chunk_size:
+        return [content]
+    
+    chunks = []
+    lines = content.split('\n')
+    current_chunk = []
+    current_length = 0
+    
+    for line in lines:
+        line_length = len(line) + 1  # +1 for newline
+        
+        if current_length + line_length > chunk_size and current_chunk:
+            # Save current chunk
+            chunks.append('\n'.join(current_chunk))
+            
+            # Start new chunk with overlap (last few lines)
+            overlap_lines = current_chunk[-overlap//50:] if len(current_chunk) > overlap//50 else current_chunk[-5:]
+            current_chunk = overlap_lines + [line]
+            current_length = sum(len(l) + 1 for l in current_chunk)
+        else:
+            current_chunk.append(line)
+            current_length += line_length
+    
+    # Add final chunk
+    if current_chunk:
+        chunks.append('\n'.join(current_chunk))
+    
+    return chunks
+
+def summarize_chunk(chunk: str, chunk_num: int, total_chunks: int, question: str) -> str:
+    """Summarize a single chunk of the document."""
+    prompt = f"""You are summarizing a portion ({chunk_num} of {total_chunks}) of a medical document.
+
+Original question: {question}
+
+Document chunk:
+{chunk}
+
+Provide a concise summary of this portion focusing on:
+- Key medical findings, test results, or observations
+- Important dates, values, or measurements
+- Any critical information relevant to the question
+
+Summary:"""
+    
+    try:
+        response = llm.invoke([HumanMessage(content=prompt)]).content
+        return response.strip()
+    except Exception as e:
+        return f"[Error summarizing chunk {chunk_num}: {str(e)}]"
+
 @app.post("/ask")
 def ask(query: Query):
     """Enhanced query endpoint that analyzes across all documents."""
@@ -325,9 +378,6 @@ def ask(query: Query):
             yield f"data: {json.dumps({'error': 'No documents available. Please upload files first.'})}\n\n"
             yield "data: [DONE]\n\n"
         return StreamingResponse(stream_error(), media_type="text/event-stream")
-    
-    # Format documents with cross-file analysis instructions
-    formatted_docs = format_documents_for_analysis(documents, file_list)
     
     # Extract patient data for context
     files_data = {}
@@ -353,8 +403,115 @@ def ask(query: Query):
         'who is', 'what is the patient', 'patient details', 'patient information'
     ])
     
-    # Enhanced prompt with validation and error handling
-    prompt = f"""You are a medical document analysis assistant. You MUST answer questions using ONLY the information explicitly provided in the documents below.
+    # Check if this is a summarization request and document is large
+    is_summary_request = any(term in question_lower for term in [
+        'summarize', 'summary', 'summarise', 'overview', 'brief', 'key points', 'main points'
+    ])
+    
+    # Check document size (rough token estimate: ~4 chars per token)
+    # Account for prompt overhead (~1500-2000 tokens for instructions, patient data, etc.)
+    doc_length = len(documents)
+    doc_tokens_estimate = doc_length // 4
+    PROMPT_OVERHEAD = 2000  # Estimated tokens for prompt instructions
+    MAX_TOKENS_FOR_SINGLE_PASS = 2000  # Lower threshold to account for prompt overhead
+    USE_CHUNKING = is_summary_request and (doc_tokens_estimate > MAX_TOKENS_FOR_SINGLE_PASS or doc_length > 8000)
+    
+    def stream():
+        try:
+            if USE_CHUNKING:
+                # Chunk-based summarization for large documents
+                yield f"data: {json.dumps({'status': 'chunking', 'message': f'Document is large ({doc_length:,} chars). Processing in chunks...'})}\n\n"
+                time.sleep(0.1)  # Small delay to ensure message is sent
+                
+                # Split document into chunks
+                chunks = chunk_document(documents, chunk_size=2500, overlap=200)
+                total_chunks = len(chunks)
+                
+                yield f"data: {json.dumps({'status': 'processing', 'message': f'Processing {total_chunks} chunks...', 'total': total_chunks})}\n\n"
+                time.sleep(0.1)
+                
+                chunk_summaries = []
+                for i, chunk in enumerate(chunks, 1):
+                    status_msg = f"Summarizing chunk {i} of {total_chunks}..."
+                    yield f"data: {json.dumps({'status': 'chunk', 'message': status_msg, 'current': i, 'total': total_chunks})}\n\n"
+                    time.sleep(0.1)
+                    
+                    try:
+                        chunk_summary = summarize_chunk(chunk, i, total_chunks, query.question)
+                        chunk_summaries.append(f"=== Chunk {i} Summary ===\n{chunk_summary}")
+                    except Exception as e:
+                        error_msg = f"Error summarizing chunk {i}: {str(e)}"
+                        yield f"data: {json.dumps({'status': 'error', 'message': error_msg})}\n\n"
+                        chunk_summaries.append(f"=== Chunk {i} Summary ===\n[Error: Could not summarize this chunk]")
+                
+                # Combine summaries
+                if not chunk_summaries:
+                    yield f"data: {json.dumps({'error': 'Failed to summarize any chunks'})}\n\n"
+                    yield "data: [DONE]\n\n"
+                    return
+                
+                yield f"data: {json.dumps({'status': 'combining', 'message': 'Combining summaries...'})}\n\n"
+                time.sleep(0.1)
+                
+                combined_summaries = "\n\n".join(chunk_summaries)
+                
+                # Final summary of summaries - limit size to avoid token issues
+                if len(combined_summaries) > 8000:
+                    # If combined summaries are too long, summarize them first
+                    yield f"data: {json.dumps({'status': 'finalizing', 'message': 'Summarizing chunk summaries...'})}\n\n"
+                    time.sleep(0.1)
+                    
+                    summary_chunks = chunk_document(combined_summaries, chunk_size=4000, overlap=200)
+                    summarized_chunks = []
+                    for j, sum_chunk in enumerate(summary_chunks, 1):
+                        try:
+                            sum_summary = summarize_chunk(sum_chunk, j, len(summary_chunks), "Summarize this summary of summaries")
+                            summarized_chunks.append(sum_summary)
+                        except:
+                            summarized_chunks.append(sum_chunk[:500] + "...")
+                    combined_summaries = "\n\n".join(summarized_chunks)
+                
+                # Final summary of summaries
+                final_prompt = f"""You are creating a comprehensive summary from multiple chunk summaries of a medical document.
+
+Original question: {query.question}
+
+Chunk summaries:
+{combined_summaries}
+
+Create a comprehensive, well-organized summary that:
+1. Answers the original question: {query.question}
+2. Integrates information from all chunks
+3. Organizes findings logically (e.g., by test type, chronology, or importance)
+4. Highlights key findings, abnormal values, and important observations
+5. Maintains accuracy - only use information from the summaries above
+
+Comprehensive Summary:"""
+                
+                yield f"data: {json.dumps({'status': 'finalizing', 'message': 'Creating final summary...'})}\n\n"
+                time.sleep(0.1)
+                
+                try:
+                    final_answer = llm.invoke([HumanMessage(content=final_prompt)]).content
+                except Exception as e:
+                    # If final summary fails, return combined summaries
+                    yield f"data: {json.dumps({'status': 'error', 'message': f'Error creating final summary: {str(e)}. Returning chunk summaries...'})}\n\n"
+                    final_answer = combined_summaries[:2000] + "\n\n[Note: This is a combination of chunk summaries. Full summary generation encountered an error.]"
+                
+                # Stream the final answer
+                for word in final_answer.split():
+                    yield f"data: {json.dumps({'token': word + ' '})}\n\n"
+                    time.sleep(0.01)
+                
+                yield f"data: {json.dumps({'final': {'answer': final_answer, 'files_analyzed': file_list, 'file_count': len(file_list)}})}\n\n"
+                yield "data: [DONE]\n\n"
+            else:
+                # Standard single-pass processing for smaller documents or non-summary requests
+                # Format documents with cross-file analysis instructions
+                formatted_docs = format_documents_for_analysis(documents, file_list)
+                
+                # Enhanced prompt with validation and error handling
+                prompt = f"""You are a medical document analysis assistant. You MUST answer questions using ONLY the information explicitly provided in the documents below.
 
 CRITICAL RULES - YOU MUST FOLLOW THESE STRICTLY:
 1. USE ONLY INFORMATION FROM THE DOCUMENTS PROVIDED - DO NOT use any prior knowledge, medical knowledge, assumptions, or general information
@@ -409,23 +566,34 @@ STRICT ANSWERING RULES:
 - If data format is incorrect (e.g., numbers in name), note it but report what is in the files
 
 ANSWER (using ONLY information from the documents above - no other knowledge allowed):"""
+                
+                # Single LLM call for comprehensive analysis
+                answer = llm.invoke([HumanMessage(content=prompt)]).content
 
-    def stream():
-        try:
-            # Single LLM call for comprehensive analysis
-            answer = llm.invoke([HumanMessage(content=prompt)]).content
+                # Stream tokens
+                for word in answer.split():
+                    yield f"data: {json.dumps({'token': word + ' '})}\n\n"
+                    time.sleep(0.02)
 
-            # Stream tokens
-            for word in answer.split():
-                yield f"data: {json.dumps({'token': word + ' '})}\n\n"
-                time.sleep(0.02)
-
-            # Final metadata with file info
-            yield f"data: {json.dumps({'final': {'answer': answer, 'files_analyzed': file_list, 'file_count': len(file_list)}})}\n\n"
-            yield "data: [DONE]\n\n"
+                # Final metadata with file info
+                yield f"data: {json.dumps({'final': {'answer': answer, 'files_analyzed': file_list, 'file_count': len(file_list)}})}\n\n"
+                yield "data: [DONE]\n\n"
 
         except Exception as e:
-            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+            error_msg = str(e)
+            # Extract rate limit message if present
+            if '429' in error_msg or 'rate limit' in error_msg.lower():
+                error_msg = "Rate limit reached. The API has exceeded its token limit. Please wait a moment and try again."
+            elif 'Error code: 429' in error_msg:
+                # Try to extract a cleaner message
+                try:
+                    import json as json_module
+                    if 'error' in error_msg:
+                        error_msg = "Rate limit reached. Please wait a moment and try again."
+                except:
+                    pass
+            
+            yield f"data: {json.dumps({'error': error_msg})}\n\n"
             yield "data: [DONE]\n\n"
 
     return StreamingResponse(stream(), media_type="text/event-stream")

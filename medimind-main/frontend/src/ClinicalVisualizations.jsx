@@ -35,7 +35,16 @@ export default function ClinicalVisualizations() {
     return <div className="clinical-error">{error}</div>;
   }
 
-  if (!clinicalData || !clinicalData.events || clinicalData.events.length === 0) {
+  // Show empty state only if there's truly no data at all
+  const hasData = clinicalData && (
+    (clinicalData.events && clinicalData.events.length > 0) ||
+    (clinicalData.labs && clinicalData.labs.length > 0) ||
+    (clinicalData.medications && clinicalData.medications.length > 0) ||
+    (clinicalData.red_flags && clinicalData.red_flags.length > 0) ||
+    (clinicalData.patient_data && Object.keys(clinicalData.patient_data).length > 0)
+  );
+
+  if (!hasData) {
     return (
       <div className="clinical-empty">
         <p>No clinical data available. Upload medical files to see visualizations.</p>
